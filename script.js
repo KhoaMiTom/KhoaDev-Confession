@@ -80,7 +80,7 @@ async function sendToDiscord(content, nickname) {
         },
         body: JSON.stringify({
             embeds: [embed],
-            content: '---'
+            content: '---' // This will act as a separator between confessions
         }),
     });
 
@@ -89,51 +89,9 @@ async function sendToDiscord(content, nickname) {
     }
 }
 
-function highlightBadWords(element) {
-    let text = element.value;
-    let highlightedText = text;
-    let hasError = false;
-    let errorWords = [];
-    
-    badWords.forEach(word => {
-        const regex = new RegExp(word, 'gi');
-        if (regex.test(text)) {
-            hasError = true;
-            errorWords.push(word);
-        }
-    });
-
-    const oldTooltip = element.parentElement.querySelector('.error-tooltip');
-    if (oldTooltip) {
-        oldTooltip.remove();
-    }
-
-    if (hasError) {
-        element.classList.add('highlight-error');
-        
-        const tooltip = document.createElement('div');
-        tooltip.className = 'error-tooltip';
-        tooltip.textContent = `Từ không phù hợp: ${errorWords.join(', ')}`;
-        tooltip.style.display = 'block';
-        
-        element.parentElement.appendChild(tooltip);
-    } else {
-        element.classList.remove('highlight-error');
-    }
-
-    return hasError;
-}
-
 textarea.addEventListener('input', () => {
     clearTimeout(typingTimer);
-    typingTimer = setTimeout(() => {
-        updateCharCount();
-        highlightBadWords(textarea);
-    }, TYPING_TIMEOUT);
-});
-
-nicknameInput.addEventListener('input', () => {
-    highlightBadWords(nicknameInput);
+    typingTimer = setTimeout(updateCharCount, TYPING_TIMEOUT);
 });
 
 form.addEventListener('submit', async (e) => {
@@ -141,18 +99,13 @@ form.addEventListener('submit', async (e) => {
     const confessionText = textarea.value.trim();
     const nickname = nicknameInput.value.trim();
 
-    if (nickname && containsBadWords(nickname)) {
-        showStatus('Nickname chứa từ không phù hợp', 'error');
-        return;
-    }
-
     if (confessionText === '') {
         showStatus('Vui lòng nhập tâm sự của bạn.', 'error');
         return;
     }
 
     if (confessionText.length < MIN_MESSAGE_LENGTH) {
-        showStatus('Tâm sự của bạn quá ngắn.', 'error');
+        showStatus('Tâm sự của bạn quá ngắn. Vui lòng chia sẻ thêm.', 'error');
         return;
     }
 
@@ -231,24 +184,29 @@ function showStatus(message, type) {
 
 updateCharCount();
 
+// Xử lý FAQ dropdowns
 document.querySelectorAll('.faq-question').forEach(question => {
     question.addEventListener('click', () => {
         const faqItem = question.parentElement;
         const isActive = faqItem.classList.contains('active');
         
+        // Đóng tất cả các câu hỏi khác
         document.querySelectorAll('.faq-item').forEach(item => {
             item.classList.remove('active');
         });
         
+        // Toggle câu hỏi hiện tại
         if (!isActive) {
             faqItem.classList.add('active');
         }
     });
 });
 
+// Theme switching
 const themeSwitch = document.querySelector('.theme-switch');
 const icon = themeSwitch.querySelector('i');
 
+// Kiểm tra theme đã lưu
 const savedTheme = localStorage.getItem('theme') || 'light';
 document.documentElement.setAttribute('data-theme', savedTheme);
 updateThemeIcon(savedTheme);
@@ -260,8 +218,9 @@ themeSwitch.addEventListener('click', () => {
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
     
+    // Animation cho icon
     icon.style.animation = 'none';
-    icon.offsetHeight;
+    icon.offsetHeight; // Trigger reflow
     icon.style.animation = 'rotate 0.5s ease-in-out';
     
     updateThemeIcon(newTheme);
