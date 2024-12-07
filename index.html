@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confession | KhoaDev</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <button class="theme-switch" aria-label="Toggle theme">
+        <i class="fas fa-moon"></i>
+    </button>
+    <div class="container">
+        <h1 class="title">Share Your Secret</h1>
+        <a href="https://discord.gg/rEz5Ejn6s8" target="_blank" class="discord-link">
+            <i class="fab fa-discord"></i>
+            Join Our Discord
+        </a>
+        <form id="confessionForm">
+            <input type="text" id="senderName" placeholder="Nickname (optional)" maxlength="20">
+            <div class="textarea-wrapper">
+                <textarea id="confessionText" rows="5" placeholder="Chia sẻ bí mật của bạn..." required></textarea>
+                <div id="charCount">0 / 2000</div>
+            </div>
+            <button type="submit" id="submitBtn" class="ripple">
+                <div class="btn-content">
+                    <div class="loading-spinner"></div>
+                    <span class="btn-text">Gửi</span>
+                    <span class="btn-icon">&#10148;</span>
+                </div>
+            </button>
+        </form>
+        <div id="status" class="status"></div>
+        
+        <div class="faq-section">
+            <h2>Câu hỏi thường gặp</h2>
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Web này của ai?</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="faq-answer">
+                    Web được phát triển bởi KhoaDev.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Ai có thể thấy được nội dung tôi đăng?</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="faq-answer">
+                    Mọi người đều có thể xem được confession của bạn tại Discord <a href="https://discord.gg/rEz5Ejn6s8" target="_blank">Join</a>
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>Danh tính của tôi có an toàn không?</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="faq-answer">
+                    Có bạn có thể để lại nickname hoặc không.
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="config.js"></script>
+    <script src="badwords.js" type="module"></script>
+    <script src="script.js" type="module"></script>
+</body>
+</html>
