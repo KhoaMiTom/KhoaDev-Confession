@@ -89,93 +89,9 @@ async function sendToDiscord(content, nickname) {
     }
 }
 
-function highlightBadWords(text) {
-    let highlightedText = text;
-    let hasBadWords = false;
-    let badWordFound = null;
-    
-    badWords.forEach(word => {
-        const regex = new RegExp(word, 'gi');
-        if (regex.test(text)) {
-            hasBadWords = true;
-            badWordFound = word;
-            highlightedText = highlightedText.replace(regex, match => 
-                `<span class="bad-word">${match}</span>`
-            );
-        }
-    });
-    
-    return { highlightedText, hasBadWords, badWordFound };
-}
-
 textarea.addEventListener('input', () => {
     clearTimeout(typingTimer);
-    typingTimer = setTimeout(() => {
-        updateCharCount();
-        
-        const preview = document.getElementById('preview') || document.createElement('div');
-        preview.id = 'preview';
-        preview.style.cssText = `
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
-            color: transparent;
-            background: transparent;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-            overflow: hidden;
-            padding: 0.8rem;
-        `;
-        
-        const { highlightedText, hasBadWords, badWordFound } = highlightBadWords(textarea.value);
-        preview.innerHTML = highlightedText;
-        
-        if (!document.getElementById('preview')) {
-            textarea.parentElement.appendChild(preview);
-        }
-        
-        let warningMsg = document.getElementById('badWordWarning');
-        if (hasBadWords) {
-            if (!warningMsg) {
-                warningMsg = document.createElement('div');
-                warningMsg.id = 'badWordWarning';
-                textarea.parentElement.appendChild(warningMsg);
-            }
-            warningMsg.textContent = `Từ "${badWordFound}" không được phép sử dụng`;
-            warningMsg.className = 'bad-word-warning show';
-        } else if (warningMsg) {
-            warningMsg.className = 'bad-word-warning';
-        }
-        
-        textarea.classList.toggle('has-bad-words', hasBadWords);
-    }, TYPING_TIMEOUT);
-});
-
-nicknameInput.addEventListener('input', () => {
-    clearTimeout(typingTimer);
-    typingTimer = setTimeout(() => {
-        const { hasBadWords, badWordFound } = highlightBadWords(nicknameInput.value);
-        
-        let warningMsg = document.getElementById('nicknameWarning');
-        if (hasBadWords) {
-            if (!warningMsg) {
-                warningMsg = document.createElement('div');
-                warningMsg.id = 'nicknameWarning';
-                nicknameInput.parentElement.appendChild(warningMsg);
-            }
-            warningMsg.textContent = `Từ "${badWordFound}" không được phép sử dụng`;
-            warningMsg.className = 'bad-word-warning show';
-            nicknameInput.classList.add('has-bad-words');
-        } else {
-            if (warningMsg) {
-                warningMsg.className = 'bad-word-warning';
-            }
-            nicknameInput.classList.remove('has-bad-words');
-        }
-    }, TYPING_TIMEOUT);
+    typingTimer = setTimeout(updateCharCount, TYPING_TIMEOUT);
 });
 
 form.addEventListener('submit', async (e) => {
@@ -183,40 +99,35 @@ form.addEventListener('submit', async (e) => {
     const confessionText = textarea.value.trim();
     const nickname = nicknameInput.value.trim();
 
-    if (nickname && containsBadWords(nickname)) {
-        showStatus('Nickname chứa từ không phù hợp.', 'error');
-        return;
-    }
-
     if (confessionText === '') {
         showStatus('Vui lòng nhập tâm sự của bạn.', 'error');
         return;
     }
 
     if (confessionText.length < MIN_MESSAGE_LENGTH) {
-        showStatus('Tâm sự của bạn quá ngắn.', 'error');
+        showStatus('Tâm sự của bạn quá ngắn. Vui lòng chia sẻ thêm.', 'error');
         return;
     }
 
     if (confessionText.length > MAX_MESSAGE_LENGTH) {
-        showStatus('Tâm sự của bạn quá dài.', 'error');
+        showStatus('Tâm sự của bạn quá dài. Vui lòng rút ngắn lại.', 'error');
         return;
     }
 
     if (containsBadWords(confessionText)) {
-        showStatus('Từ ngữ không phù hợp.', 'error');
+        showStatus('Tâm sự của bạn chứa từ ngữ không phù hợp. Vui lòng kiểm tra lại.', 'error');
         return;
     }
 
     if (hasRepeatedChars(confessionText)) {
-        showStatus('Chứa quá nhiều ký tự lặp lại.', 'error');
+        showStatus('Tâm sự của bạn chứa quá nhiều ký tự lặp lại. Vui lòng kiểm tra lại.', 'error');
         return;
     }
 
     submitBtn.disabled = true;
     const spinner = document.querySelector('.loading-spinner');
     spinner.style.display = 'block';
-    showStatus('Đang gửi...', 'pending');
+    showStatus('Đang gửi tâm sự...', 'pending');
 
     try {
         const messages = splitMessage(confessionText);
@@ -226,7 +137,7 @@ form.addEventListener('submit', async (e) => {
             await new Promise(resolve => setTimeout(resolve, 500));
         }
 
-        showStatus('Gửi thành công!', 'success');
+        showStatus('✨ Tâm sự đã được gửi thành công!', 'success');
         
         textarea.style.opacity = '0';
         nicknameInput.style.opacity = '0';
@@ -241,7 +152,7 @@ form.addEventListener('submit', async (e) => {
 
     } catch (error) {
         console.error('Lỗi:', error);
-        showStatus('Đã xảy ra lỗi.', 'error');
+        showStatus('❌ Đã xảy ra lỗi. Vui lòng thử lại sau.', 'error');
     } finally {
         submitBtn.disabled = false;
         spinner.style.display = 'none';
@@ -273,24 +184,29 @@ function showStatus(message, type) {
 
 updateCharCount();
 
+// Xử lý FAQ dropdowns
 document.querySelectorAll('.faq-question').forEach(question => {
     question.addEventListener('click', () => {
         const faqItem = question.parentElement;
         const isActive = faqItem.classList.contains('active');
         
+        // Đóng tất cả các câu hỏi khác
         document.querySelectorAll('.faq-item').forEach(item => {
             item.classList.remove('active');
         });
         
+        // Toggle câu hỏi hiện tại
         if (!isActive) {
             faqItem.classList.add('active');
         }
     });
 });
 
+// Theme switching
 const themeSwitch = document.querySelector('.theme-switch');
 const icon = themeSwitch.querySelector('i');
 
+// Kiểm tra theme đã lưu
 const savedTheme = localStorage.getItem('theme') || 'light';
 document.documentElement.setAttribute('data-theme', savedTheme);
 updateThemeIcon(savedTheme);
@@ -302,8 +218,9 @@ themeSwitch.addEventListener('click', () => {
     document.documentElement.setAttribute('data-theme', newTheme);
     localStorage.setItem('theme', newTheme);
     
+    // Animation cho icon
     icon.style.animation = 'none';
-    icon.offsetHeight;
+    icon.offsetHeight; // Trigger reflow
     icon.style.animation = 'rotate 0.5s ease-in-out';
     
     updateThemeIcon(newTheme);

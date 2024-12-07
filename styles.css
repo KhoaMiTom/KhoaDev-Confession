@@ -83,7 +83,7 @@ body {
 
 .textarea-wrapper {
     position: relative;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
 }
 
 textarea {
@@ -111,8 +111,8 @@ textarea:focus {
 
 #charCount {
     position: absolute;
-    bottom: -20px;
-    right: 0;
+    bottom: 10px;
+    right: 10px;
     font-size: 0.8rem;
     color: #888;
 }
@@ -347,134 +347,4 @@ button:disabled {
 
 [data-theme="dark"] .container {
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-}
-
-.discord-link {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 12px;
-    text-decoration: none;
-    color: #fff;
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin: -0.5rem auto 1.5rem;
-    padding: 12px 24px;
-    border-radius: 50px;
-    transition: all 0.3s ease;
-    background: linear-gradient(90deg, #7289DA, #5865F2);
-    width: fit-content;
-    box-shadow: 0 4px 15px rgba(114, 137, 218, 0.2);
-    position: relative;
-    overflow: hidden;
-}
-
-.discord-link::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.2),
-        transparent
-    );
-    transition: 0.5s;
-}
-
-.discord-link:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(114, 137, 218, 0.3);
-}
-
-.discord-link:hover::before {
-    left: 100%;
-}
-
-.discord-link i {
-    font-size: 1.4rem;
-    animation: bounce 2s infinite;
-}
-
-@keyframes bounce {
-    0%, 100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-3px);
-    }
-}
-
-[data-theme="dark"] .discord-link {
-    background: linear-gradient(90deg, #5865F2, #7289DA);
-    box-shadow: 0 4px 15px rgba(88, 101, 242, 0.3);
-}
-
-[data-theme="dark"] .discord-link:hover {
-    box-shadow: 0 6px 20px rgba(88, 101, 242, 0.4);
-}
-
-.bad-word {
-    background-color: rgba(255, 0, 0, 0.2);
-    border-radius: 3px;
-    padding: 0 2px;
-    color: #ff0000;
-}
-
-textarea.has-bad-words {
-    border-color: #ff0000 !important;
-}
-
-.textarea-wrapper {
-    position: relative;
-}
-
-#preview {
-    font-family: inherit;
-    font-size: inherit;
-    line-height: inherit;
-    border: 2px solid transparent;
-}
-
-[data-theme="dark"] .bad-word {
-    background-color: rgba(255, 0, 0, 0.15);
-    color: #ff4444;
-}
-
-.bad-word-warning {
-    position: absolute;
-    bottom: -20px;
-    left: 0;
-    color: #ff0000;
-    font-size: 0.85rem;
-    opacity: 0;
-    transform: translateY(-10px);
-    transition: all 0.3s ease;
-}
-
-.bad-word-warning.show {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-[data-theme="dark"] .bad-word-warning {
-    color: #ff4444;
-}
-
-/* Thêm style cho input khi có bad words */
-input[type="text"].has-bad-words {
-    border-color: #ff0000 !important;
-}
-
-/* Điều chỉnh vị trí của warning cho nickname */
-.container form {
-    position: relative;
-}
-
-#nicknameWarning.bad-word-warning {
-    bottom: auto;
-    top: 40px;
 }
