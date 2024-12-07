@@ -463,3 +463,18 @@ textarea.has-bad-words {
 [data-theme="dark"] .bad-word-warning {
     color: #ff4444;
 }
+
+/* Thêm style cho input khi có bad words */
+input[type="text"].has-bad-words {
+    border-color: #ff0000 !important;
+}
+
+/* Điều chỉnh vị trí của warning cho nickname */
+.container form {
+    position: relative;
+}
+
+#nicknameWarning.bad-word-warning {
+    bottom: auto;
+    top: 40px;
+}

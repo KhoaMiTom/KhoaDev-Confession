@@ -154,10 +154,39 @@ textarea.addEventListener('input', () => {
     }, TYPING_TIMEOUT);
 });
 
+nicknameInput.addEventListener('input', () => {
+    clearTimeout(typingTimer);
+    typingTimer = setTimeout(() => {
+        const { hasBadWords, badWordFound } = highlightBadWords(nicknameInput.value);
+        
+        let warningMsg = document.getElementById('nicknameWarning');
+        if (hasBadWords) {
+            if (!warningMsg) {
+                warningMsg = document.createElement('div');
+                warningMsg.id = 'nicknameWarning';
+                nicknameInput.parentElement.appendChild(warningMsg);
+            }
+            warningMsg.textContent = `Từ "${badWordFound}" không được phép sử dụng`;
+            warningMsg.className = 'bad-word-warning show';
+            nicknameInput.classList.add('has-bad-words');
+        } else {
+            if (warningMsg) {
+                warningMsg.className = 'bad-word-warning';
+            }
+            nicknameInput.classList.remove('has-bad-words');
+        }
+    }, TYPING_TIMEOUT);
+});
+
 form.addEventListener('submit', async (e) => {
     e.preventDefault();
     const confessionText = textarea.value.trim();
     const nickname = nicknameInput.value.trim();
+
+    if (nickname && containsBadWords(nickname)) {
+        showStatus('Nickname chứa từ không phù hợp.', 'error');
+        return;
+    }
 
     if (confessionText === '') {
         showStatus('Vui lòng nhập tâm sự của bạn.', 'error');
